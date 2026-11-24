@@ -11,5 +11,5 @@
     "skipLibCheck": true,
     "esModuleInterop": true
   },
-  "include": ["src", "tests", "examples"]
+  "include": ["src", "tests", "examples", "vitest.config.ts"]
 }
