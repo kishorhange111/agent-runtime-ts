@@ -1,0 +1,28 @@
+{
+  "name": "agent-runtime-ts",
+  "version": "0.1.0",
+  "description": "Production agent runtime in TypeScript: typed zod tools, step/cost budgets, loop detection, tool timeouts and retries, human approval for side effects, and structured tracing, on the Claude API.",
+  "type": "module",
+  "license": "MIT",
+  "author": "Kishor Hange",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^1.14.0",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.7",
+    "typescript": "^7.0.2",
+    "vitest": "^5.1.1"
+  }
+}
