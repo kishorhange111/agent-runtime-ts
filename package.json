@@ -11,6 +11,7 @@
     "build": "tsc -p tsconfig.json",
     "typecheck": "tsc -p tsconfig.json --noEmit",
     "test": "vitest run",
+    "eval": "tsc -p tsconfig.json && node dist/examples/guard-eval.js",
     "lint": "tsc -p tsconfig.json --noEmit"
   },
   "engines": {
