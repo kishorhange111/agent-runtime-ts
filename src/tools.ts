@@ -9,6 +9,9 @@ export interface ToolSpec<S extends z.ZodType = z.ZodType> {
   name: string;
   description: string;
   schema: S;
+  /** Raw JSON schema sent to the model instead of one generated from ``schema``
+   * (used for tools whose schema comes from elsewhere, e.g. an MCP server). */
+  jsonSchema?: Record<string, unknown>;
   /** "write" tools mutate external state: they go through the approval hook. */
   effect: "read" | "write";
   /** Safe to retry on transient failure (reads usually are; payments are not). */
@@ -26,7 +29,7 @@ export function defineTool<S extends z.ZodType>(spec: ToolSpec<S>): ToolSpec<S> 
 }
 
 export function toApiTool(t: ToolSpec): Anthropic.Tool {
-  const schema = z.toJSONSchema(t.schema) as Record<string, unknown>;
+  const schema = { ...(t.jsonSchema ?? (z.toJSONSchema(t.schema) as Record<string, unknown>)) };
   delete schema.$schema;
   return {
     name: t.name,

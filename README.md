@@ -12,6 +12,7 @@ A production-minded **agent runtime in TypeScript** on the Claude API. It is the
 | **Budgets** | Caps on model steps, tool calls and USD cost, using Opus 5.5 pricing: $4 / $20 per MTok input/output, with cache pricing not modelled. |
 | **Stop reasons** | `end_turn`, `tool_use`, `pause_turn` (resent so the server continues), `refusal` and `max_tokens` are all handled explicitly. |
 | **Tracing** | Nested spans (agent → model → tool → approval) with token counts, attempts and errors. Exported as JSONL in an OpenTelemetry-compatible shape, with a per-tool latency/error summary. |
+| **MCP tools** | `mcpTools(client)` wraps every tool of a connected MCP server. The server's JSON schema goes to the model unchanged and is **enforced locally with ajv** before the call. Tools are namespaced (`crm__get_customer`) and allow-listed. Server annotations are only *hints*, so by default every MCP tool is treated as a write and goes through approval unless you opt into `trustAnnotations`. |
 | **Evals** | Every guard firing is recorded in `result.interventions`, which you can assert on in regression tests. |
 
 Assistant turns are appended **unchanged**, so thinking blocks round-trip as the API requires.
@@ -39,6 +40,16 @@ const result = await runAgent({
   approve: async (call) => askHuman(call),
 });
 // result.stop, result.text, result.costUsd, result.interventions, result.trace.summary()
+```
+
+MCP servers plug in the same way:
+
+```ts
+import { Client } from "@modelcontextprotocol/sdk/client/index.js";
+const client = new Client({ name: "agent", version: "1.0.0" });
+await client.connect(transport); // stdio, HTTP, ...
+const tools = await mcpTools(client, { prefix: "crm", allow: ["get_customer", "open_ticket"] });
+await runAgent({ model, tools, input, approve });
 ```
 
 See [`examples/support-agent.ts`](examples/support-agent.ts) for a runnable support agent with terminal approval. It needs `ANTHROPIC_API_KEY`.
